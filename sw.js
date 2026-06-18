@@ -1,17 +1,17 @@
 // Service Worker for My Bank Cards
 const CACHE_NAME = 'bank-cards-v1';
 const urlsToCache = [
-    '/',
-    '/index.html',
-    '/manifest.json',
-    '/icons/icon-72.png',
-    '/icons/icon-96.png',
-    '/icons/icon-128.png',
-    '/icons/icon-144.png',
-    '/icons/icon-152.png',
-    '/icons/icon-192.png',
-    '/icons/icon-384.png',
-    '/icons/icon-512.png'
+    '/my-bank-cards/',
+    '/my-bank-cards/index.html',
+    '/my-bank-cards/manifest.json',
+    '/my-bank-cards/icons/icon-72.png',
+    '/my-bank-cards/icons/icon-96.png',
+    '/my-bank-cards/icons/icon-128.png',
+    '/my-bank-cards/icons/icon-144.png',
+    '/my-bank-cards/icons/icon-152.png',
+    '/my-bank-cards/icons/icon-192.png',
+    '/my-bank-cards/icons/icon-384.png',
+    '/my-bank-cards/icons/icon-512.png'
 ];
 
 self.addEventListener('install', event => {
@@ -23,28 +23,12 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-    event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.map(cacheName => {
-                    if (cacheName !== CACHE_NAME) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        })
-    );
-    self.clients.claim();
+    event.waitUntil(self.clients.claim());
 });
 
 self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request)
-            .then(response => {
-                if (response) {
-                    return response;
-                }
-                return fetch(event.request);
-            })
+            .then(response => response || fetch(event.request))
     );
 });
